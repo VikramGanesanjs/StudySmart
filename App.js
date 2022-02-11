@@ -1,20 +1,35 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { registerRootComponent } from "expo";
+import { StatusBar } from "expo-status-bar";
+import { StyleSheet, Text, View } from "react-native";
+import SplashScreen from "./screens/SplashScreen";
+
+import {
+  useFonts,
+  SpaceGrotesk_400Regular,
+} from "@expo-google-fonts/space-grotesk";
+import { BarlowSemiCondensed_400Regular } from "@expo-google-fonts/barlow-semi-condensed";
+import InitialScreen from "./screens/InitialScreen";
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+  let [fontsLoaded] = useFonts({
+    BarlowSemiCondensed_400Regular,
+    SpaceGrotesk_400Regular,
+  });
+
+  if (!fontsLoaded) {
+    return <View />;
+  }
+
+  return <InitialScreen />;
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
+
+registerRootComponent(App);
