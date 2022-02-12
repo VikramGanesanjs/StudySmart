@@ -2,6 +2,7 @@ import { registerRootComponent } from "expo";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import SplashScreen from "./screens/SplashScreen";
+import SignUp from "./screens/SignUp";
 
 import {
   useFonts,
@@ -20,7 +21,7 @@ export default function App() {
     return <View />;
   }
 
-  return <InitialScreen />;
+  return <SignUp />;
 }
 
 const styles = StyleSheet.create({

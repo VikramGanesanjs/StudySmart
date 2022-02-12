@@ -225,3 +225,144 @@ export const InitialScreenSloganText = styled.Text`
 
   color: #000000;
 `;
+
+export const RegisterScreenHeading = styled.Text`
+  width: 243px;
+  height: 77px;
+
+  font-family: SpaceGrotesk_400Regular;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 60px;
+  line-height: 77px;
+
+  color: #000000;
+`;
+
+export const RegisterScreenDividerLine1 = styled.View`
+  width: 278px;
+  height: 0px;
+
+  border: 5px solid #89cff0;
+`;
+
+export const RegisterScreenDividerLine2 = styled.View`
+  width: 155px;
+  height: 0px;
+
+  border: 5px dashed #aaf0d1;
+`;
+
+export const RegisterScreenFullNameInputText = styled.Text`
+  width: 153px;
+  height: 48px;
+  margin-bottom: 10px;
+  font-family: BarlowSemiCondensed_400Regular;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 40px;
+  line-height: 48px;
+  text-align: left;
+  color: #000000;
+`;
+
+export const RegisterScreenFullNameTextInput = styled.TextInput`
+  width: 315px;
+  height: 61px;
+  padding: 5px;
+  margin-bottom: 10px;
+  background: #c4c4c4;
+`;
+
+export const RegisterScreenEmailInputText = styled.Text`
+  width: 87px;
+  height: 48px;
+  margin-bottom: 10px;
+  font-family: BarlowSemiCondensed_400Regular;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 40px;
+  line-height: 48px;
+  color: #000000;
+`;
+
+export const RegisterScreenEmailTextInput = styled.TextInput`
+  width: 315px;
+  height: 61px;
+  padding: 5px;
+  margin-bottom: 10px;
+  background: #c4c4c4;
+`;
+
+export const RegisterScreenPasswordInputText = styled.Text`
+  width: 149px;
+  height: 48px;
+  margin-bottom: 10px;
+  font-family: BarlowSemiCondensed_400Regular;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 40px;
+  line-height: 48px;
+
+  color: #000000;
+`;
+
+export const RegisterScreenPasswordTextInput = styled.TextInput`
+  width: 315px;
+  height: 61px;
+  padding: 5px;
+  margin-bottom: 10px;
+  background: #c4c4c4;
+`;
+
+export const RegisterScreenConfirmPasswordInputText = styled.Text`
+  width: 281px;
+  height: 48px;
+  margin-bottom: 10px;
+  font-family: BarlowSemiCondensed_400Regular;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 40px;
+  line-height: 48px;
+  color: #000000;
+`;
+
+export const RegisterScreenConfirmPasswordTextInput = styled.TextInput`
+  width: 315px;
+  height: 61px;
+  padding: 5px;
+  margin-bottom: 10px;
+  background: #c4c4c4;
+`;
+
+export const RegisterScreenSubmitButton = styled.TouchableOpacity`
+  width: 289px;
+  height: 87px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #000000;
+`;
+
+export const RegisterScreenSubmitButtonText = styled.Text`
+  width: 130px;
+  height: 48px;
+  font-family: BarlowSemiCondensed_400Regular;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 40px;
+  line-height: 48px;
+  color: #ffffff;
+`;
+
+export const RegisterScreenErrorLabel = styled.Text`
+  margin-bottom: 10px;
+  font-family: BarlowSemiCondensed_400Regular;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 30px;
+  text-align: center;
+  line-height: 48px;
+  color: #000000;
+`;
