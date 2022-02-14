@@ -10,6 +10,9 @@ import {
 } from "@expo-google-fonts/space-grotesk";
 import { BarlowSemiCondensed_400Regular } from "@expo-google-fonts/barlow-semi-condensed";
 import InitialScreen from "./screens/InitialScreen";
+import Login from "./screens/Login";
+import RootStack from "./navigators/RootStack";
+import { UserProvider } from "./components/UserProvider";
 
 export default function App() {
   let [fontsLoaded] = useFonts({
@@ -21,7 +24,11 @@ export default function App() {
     return <View />;
   }
 
-  return <SignUp />;
+  return (
+    <UserProvider>
+      <RootStack />
+    </UserProvider>
+  );
 }
 
 const styles = StyleSheet.create({

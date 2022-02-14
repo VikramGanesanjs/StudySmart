@@ -262,7 +262,7 @@ export const RegisterScreenFullNameInputText = styled.Text`
   font-weight: normal;
   font-size: 40px;
   line-height: 48px;
-  text-align: left;
+  text-align: center;
   color: #000000;
 `;
 
@@ -271,7 +271,8 @@ export const RegisterScreenFullNameTextInput = styled.TextInput`
   height: 61px;
   padding: 5px;
   margin-bottom: 10px;
-  background: #c4c4c4;
+  background: #ffffff;
+  border: 5px solid #000000;
 `;
 
 export const RegisterScreenEmailInputText = styled.Text`
@@ -280,6 +281,7 @@ export const RegisterScreenEmailInputText = styled.Text`
   margin-bottom: 10px;
   font-family: BarlowSemiCondensed_400Regular;
   font-style: normal;
+  text-align: center;
   font-weight: normal;
   font-size: 40px;
   line-height: 48px;
@@ -291,12 +293,14 @@ export const RegisterScreenEmailTextInput = styled.TextInput`
   height: 61px;
   padding: 5px;
   margin-bottom: 10px;
-  background: #c4c4c4;
+  background: #ffffff;
+  border: 5px solid #000000;
 `;
 
 export const RegisterScreenPasswordInputText = styled.Text`
   width: 149px;
   height: 48px;
+  text-align: center;
   margin-bottom: 10px;
   font-family: BarlowSemiCondensed_400Regular;
   font-style: normal;
@@ -311,14 +315,17 @@ export const RegisterScreenPasswordTextInput = styled.TextInput`
   width: 315px;
   height: 61px;
   padding: 5px;
+
   margin-bottom: 10px;
-  background: #c4c4c4;
+  background: #ffffff;
+  border: 5px solid #000000;
 `;
 
 export const RegisterScreenConfirmPasswordInputText = styled.Text`
   width: 281px;
   height: 48px;
   margin-bottom: 10px;
+  text-align: center;
   font-family: BarlowSemiCondensed_400Regular;
   font-style: normal;
   font-weight: normal;
@@ -332,7 +339,8 @@ export const RegisterScreenConfirmPasswordTextInput = styled.TextInput`
   height: 61px;
   padding: 5px;
   margin-bottom: 10px;
-  background: #c4c4c4;
+  background: #ffffff;
+  border: 5px solid #000000;
 `;
 
 export const RegisterScreenSubmitButton = styled.TouchableOpacity`
@@ -342,6 +350,7 @@ export const RegisterScreenSubmitButton = styled.TouchableOpacity`
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-top: 10px;
   background: #000000;
 `;
 
@@ -352,6 +361,7 @@ export const RegisterScreenSubmitButtonText = styled.Text`
   font-style: normal;
   font-weight: normal;
   font-size: 40px;
+  text-align: center;
   line-height: 48px;
   color: #ffffff;
 `;
@@ -364,5 +374,5 @@ export const RegisterScreenErrorLabel = styled.Text`
   font-size: 30px;
   text-align: center;
   line-height: 48px;
-  color: #000000;
+  color: #ff0000;
 `;
