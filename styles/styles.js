@@ -8,6 +8,7 @@ export const Container = styled.View`
   height: 100%;
   width: 100%;
   position: relative;
+  background-color: #ffffff;
 `;
 
 export const StudySmartLogoText = styled.Text`
@@ -41,7 +42,7 @@ export const StudySmartLogoImage = styled.Image`
   top: 211px;
 `;
 
-export const SplashScreenSloganContainer = styled.View`
+export const SplashScreenSloganContainer = styled.TouchableOpacity`
   position: absolute;
   width: 355px;
   height: 123px;

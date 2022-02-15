@@ -13,7 +13,7 @@ import {
   InitialScreenSloganText,
 } from "./../styles/styles";
 
-const InitialScreen = () => {
+const InitialScreen = ({ navigation }) => {
   return (
     <Container>
       <InitialScreenLogoText>Study Smart</InitialScreenLogoText>
@@ -23,11 +23,19 @@ const InitialScreen = () => {
       />
       <InitialScreenDividerLine />
       <InitialScreenMainText>Get Started</InitialScreenMainText>
-      <InitialScreenLoginButton>
+      <InitialScreenLoginButton
+        onPress={() => {
+          navigation.navigate("Login");
+        }}
+      >
         <InitialScreenLoginButtonText>Login</InitialScreenLoginButtonText>
       </InitialScreenLoginButton>
 
-      <InitialScreenRegisterButton>
+      <InitialScreenRegisterButton
+        onPress={() => {
+          navigation.navigate("SignUp");
+        }}
+      >
         <InitialScreenRegisterButtonText>
           Register
         </InitialScreenRegisterButtonText>

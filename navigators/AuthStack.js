@@ -8,9 +8,33 @@ const Stack = createStackNavigator();
 const AuthStack = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen component={InitialScreen} name="Initial Screen" />
-      <Stack.Screen component={Login} name="Login" />
-      <Stack.Screen component={SignUp} name="SignUp" />
+      <Stack.Screen
+        component={InitialScreen}
+        name="Initial Screen"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        component={Login}
+        name="Login"
+        options={{
+          headerTitleStyle: {
+            fontFamily: "BarlowSemiCondensed_400Regular",
+          },
+          headerBackTitleVisible: false,
+        }}
+      />
+      <Stack.Screen
+        component={SignUp}
+        name="SignUp"
+        options={{
+          headerTitleStyle: {
+            fontFamily: "BarlowSemiCondensed_400Regular",
+          },
+          headerBackTitleVisible: false,
+        }}
+      />
     </Stack.Navigator>
   );
 };

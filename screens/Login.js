@@ -110,7 +110,7 @@ const Login = () => {
                 if (validateFields()) {
                   await signInWithEmailAndPassword(auth, email, password).catch(
                     () => {
-                      setErrorMessage("Usernam and password do not match");
+                      setErrorMessage("Username and password do not match");
                     }
                   );
                 }

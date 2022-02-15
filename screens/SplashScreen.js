@@ -1,5 +1,7 @@
+import { signOut } from "firebase/auth";
 import React from "react";
 import * as Progress from "react-native-progress";
+import { auth } from "../config/firebase";
 
 import {
   Container,
@@ -20,7 +22,11 @@ const SplashScreen = () => {
       <StudySmartLogoImage source={require("../assets/graduation-cap.png")} />
       <StudySmartLogoLine />
       <StudySmartLogoText>Study Smart</StudySmartLogoText>
-      <SplashScreenSloganContainer></SplashScreenSloganContainer>
+      <SplashScreenSloganContainer
+        onPress={async () => {
+          await signOut(auth);
+        }}
+      ></SplashScreenSloganContainer>
       <SplashScreenSloganText>
         Studying habits as smart as you are.
       </SplashScreenSloganText>
