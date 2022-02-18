@@ -1,8 +1,8 @@
 import React from "react";
 import { View } from "react-native";
 
-const CreateSchedule = () => {
+const ViewSchedules = () => {
   return <View />;
 };
 
-export default CreateSchedule;
+export default ViewSchedules;

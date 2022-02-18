@@ -2,7 +2,11 @@ import React from "react";
 import { useState } from "react";
 import { Text, KeyboardAvoidingView, Platform, Animated } from "react-native";
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
-import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
+import {
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native-gesture-handler";
 import { signOut } from "firebase/auth";
 import { auth } from "../config/firebase";
 
@@ -60,85 +64,98 @@ const Pomodoro = () => {
         }}
         behavior={Platform.OS === "ios" ? "padding" : null}
       >
-        <CountdownCircleTimer
-          isPlaying={false}
-          duration={studyTime ? 3 : 3}
-          strokeWidth={50}
-          key={studyTime}
-          colors="#ffffff"
-          size={300}
-          colorsTime={[250, 200, 150, 0]}
-          onComplete={() => {
-            animateBgColor();
-            setStudyTime(!studyTime);
+        <ScrollView
+          contentContainerStyle={{
+            paddingTop: 70,
+            justifyContent: "center",
+            alignItems: "center",
+            display: "flex",
           }}
         >
-          {({ remainingTime }) => (
-            <Text
-              style={{
-                color: "#ffffff",
-                fontFamily: "SpaceGrotesk_400Regular",
-                fontSize: 50,
-              }}
-            >
-              {formatTime(remainingTime)}
-            </Text>
-          )}
-        </CountdownCircleTimer>
-        <Text
-          style={{
-            fontFamily: "SpaceGrotesk_400Regular",
-            color: "#ffffff",
-            margin: 60,
-            textAlign: "center",
-            fontSize: 27,
-          }}
-        >
-          It's time to study AP History!
-        </Text>
-        <Text
-          style={{
-            fontFamily: "SpaceGrotesk_400Regular",
-            fontSize: 20,
-            marginBottom: 30,
-            color: "#ffffff",
-          }}
-        >
-          Focuses for Today's Study Session:
-        </Text>
+          <CountdownCircleTimer
+            isPlaying={true}
+            duration={studyTime ? 1500 : 300}
+            strokeWidth={50}
+            key={studyTime}
+            colors="#ffffff"
+            size={300}
+            colorsTime={[250, 200, 150, 0]}
+            onComplete={() => {
+              animateBgColor();
+              setStudyTime(!studyTime);
+            }}
+          >
+            {({ remainingTime }) => (
+              <Text
+                style={{
+                  color: "#ffffff",
+                  fontFamily: "SpaceGrotesk_400Regular",
+                  fontSize: 50,
+                }}
+              >
+                {formatTime(remainingTime)}
+              </Text>
+            )}
+          </CountdownCircleTimer>
+          <Text
+            style={{
+              fontFamily: "SpaceGrotesk_400Regular",
+              color: "#ffffff",
+              margin: 60,
+              textAlign: "center",
+              fontSize: 27,
+            }}
+          >
+            {studyTime
+              ? "It's time to study AP History!"
+              : "It's time to take a break!"}
+          </Text>
+          <Text
+            style={{
+              fontFamily: "SpaceGrotesk_400Regular",
+              fontSize: 20,
+              marginBottom: 30,
+              color: "#ffffff",
+            }}
+          >
+            {studyTime
+              ? "Focuses for Today's Study Session:"
+              : "What makes you feel relaxed?"}
+          </Text>
 
-        <TextInput
-          onChangeText={setFocusOne}
-          value={focusOne}
-          placeholder="First Goal"
-          style={{
-            height: 60,
-            width: 350,
-            borderBottomColor: "#ffffff",
-            borderColor: "#89CFF0",
-            borderBottomWidth: 5,
-            color: "#ffffff",
-            textAlign: "center",
-            fontFamily: "BarlowSemiCondensed_400Regular",
-            fontSize: 25,
-          }}
-        />
-        <TextInput
-          onChangeText={setFocusTwo}
-          value={focusTwo}
-          placeholder="Second Goal"
-          style={{
-            height: 80,
-            width: 350,
-            borderBottomColor: "#ffffff",
-            borderColor: "#ffffff",
-            borderBottomWidth: 5,
-            color: "#ffffff",
-            textAlign: "center",
-            fontFamily: "BarlowSemiCondensed_400Regular",
-            fontSize: 25,
-          }}
-        />
+          <TextInput
+            onChangeText={setFocusOne}
+            value={focusOne}
+            placeholder="First Goal"
+            style={{
+              height: 60,
+              width: 350,
+              borderBottomColor: "#ffffff",
+              borderColor: "#89CFF0",
+              borderBottomWidth: 5,
+              color: "#ffffff",
+              textAlign: "center",
+              fontFamily: "BarlowSemiCondensed_400Regular",
+              fontSize: 25,
+            }}
+          />
+          <TextInput
+            onChangeText={setFocusTwo}
+            value={focusTwo}
+            placeholder="Second Goal"
+            style={{
+              height: 80,
+              width: 350,
+              borderBottomColor: "#ffffff",
+              borderColor: "#ffffff",
+              borderBottomWidth: 5,
+              color: "#ffffff",
+              textAlign: "center",
+              fontFamily: "BarlowSemiCondensed_400Regular",
+              fontSize: 25,
+            }}
+          />
+        </ScrollView>
       </KeyboardAvoidingView>
     </Animated.View>
   );

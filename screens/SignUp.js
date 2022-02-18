@@ -131,6 +131,13 @@ const SignUp = () => {
                       emailAddress: email,
                       userIdentificationNumber: auth.currentUser.uid,
                     });
+                    const ref = doc(
+                      db,
+                      "Users",
+                      auth.currentUser.uid,
+                      `S-${auth.currentUser.uid}`
+                    );
+                    setDoc(ref, {});
                   } catch (err) {
                     setErrorMessage(err.toString());
                   }
