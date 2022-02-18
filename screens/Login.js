@@ -143,7 +143,6 @@ const Login = () => {
                     const errorCode = error.code;
                     const errorMessage = error.message;
                     setErrorMessage(errorMessage);
-                    // ..
                   });
               }}
             >

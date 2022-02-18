@@ -10,6 +10,18 @@ const Welcome = () => {
   const [name, setName] = useState("");
   const [start, setStart] = useState(true);
 
+  const formatTime = (time) => {
+    let minutes = Math.floor(time / 60);
+    let seconds = time - minutes * 60;
+    function str_pad_left(string, pad, length) {
+      return (new Array(length + 1).join(pad) + string).slice(-length);
+    }
+
+    var finalTime =
+      str_pad_left(minutes, "0", 2) + ":" + str_pad_left(seconds, "0", 2);
+    return finalTime;
+  };
+
   const retrieveUserName = async () => {
     const docRef = doc(db, "Users", auth.currentUser.uid);
     const docSnap = await getDoc(docRef);
@@ -22,7 +34,13 @@ const Welcome = () => {
   };
 
   useEffect(async () => {
-    await retrieveUserName();
+    let isMounted = true;
+    if (isMounted) {
+      await retrieveUserName();
+    }
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   return (
@@ -41,7 +59,7 @@ const Welcome = () => {
         colorsTime={[250, 200, 150, 0]}
         onComplete={() => console.log("complete")}
       >
-        {({ remainingTime }) => <Text>{remainingTime}</Text>}
+        {({ remainingTime }) => <Text>{formatTime(remainingTime)}</Text>}
       </CountdownCircleTimer>
     </ScrollView>
   );

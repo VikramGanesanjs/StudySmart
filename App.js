@@ -13,6 +13,7 @@ import InitialScreen from "./screens/InitialScreen";
 import Login from "./screens/Login";
 import RootStack from "./navigators/RootStack";
 import { UserProvider } from "./components/UserProvider";
+import { CurrentTimeProvider } from "./components/CurrentTimeProvider";
 
 export default function App() {
   let [fontsLoaded] = useFonts({
@@ -26,7 +27,9 @@ export default function App() {
 
   return (
     <UserProvider>
-      <RootStack />
+      <CurrentTimeProvider>
+        <RootStack />
+      </CurrentTimeProvider>
     </UserProvider>
   );
 }

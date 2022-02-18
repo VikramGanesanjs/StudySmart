@@ -121,16 +121,19 @@ const SignUp = () => {
               placeholder="********"
             />
             <RegisterScreenSubmitButton
-              onPress={() => {
+              onPress={async () => {
                 if (validateFields()) {
-                  createUserWithEmailAndPassword(auth, email, password);
-                  setTimeout(() => {
-                    setDoc(doc(db, "Users", auth.currentUser.uid), {
+                  try {
+                    await createUserWithEmailAndPassword(auth, email, password);
+
+                    await setDoc(doc(db, "Users", auth.currentUser.uid), {
                       fullName: fullName,
                       emailAddress: email,
                       userIdentificationNumber: auth.currentUser.uid,
                     });
-                  }, 1000);
+                  } catch (err) {
+                    setErrorMessage(err.toString());
+                  }
                 }
               }}
             >
