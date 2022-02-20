@@ -1,5 +1,5 @@
 import { createStackNavigator } from "@react-navigation/stack";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import Welcome from "../screens/Welcome";
 import InitialScreen from "./../screens/InitialScreen";
 
@@ -7,23 +7,15 @@ import SplashScreen from "./../screens/SplashScreen";
 import Pomodoro from "./../screens/Pomodoro";
 import CreateSchedule from "../screens/CreateSchedule";
 import ViewSchedules from "../screens/ViewSchedules";
-import { Ionicons } from "expo-vector-icons";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { auth } from "../config/firebase";
+import { AuthErrorCodes } from "firebase/auth";
+import { Entypo } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
+import { View } from "react-native";
 
 const Stack = createStackNavigator();
-const Tab = createBottomTabNavigator();
-
-const MainStack = () => {
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        headerMode: "none",
-      }}
-    >
-      <Stack.Screen component={PomodoroStack} name="Pomodoro" />
-      <Stack.Screen component={SplashScreen} name="Splash Screen" />
-    </Stack.Navigator>
-  );
-};
+const Tab = createMaterialTopTabNavigator();
 
 const PomodoroStack = () => {
   return (
@@ -37,11 +29,28 @@ const PomodoroStack = () => {
   );
 };
 
-const WelcomeStack = () => {
+const MainStack = () => {
   return (
     <Tab.Navigator
+      initialRouteName="CreateSchedule"
       screenOptions={{
+        tabBarShowLabel: false,
         headerShown: "none",
+        tabBarIndicatorStyle: {
+          backgroundColor: "#000000",
+        },
+        tabBarItemStyle: {
+          paddingTop: 50,
+        },
+        tabBarStyle: {
+          height: 100,
+        },
+        tabBarContentContainerStyle: {
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+        },
         tabBarInactiveTintColor: "#c4c4c4",
         tabBarActiveTintColor: "#000000",
       }}
@@ -50,17 +59,17 @@ const WelcomeStack = () => {
         component={Welcome}
         name="Welcome"
         options={{
-          tabBarButton: Button,
-          tabBarIcon: ({ color }) => <Ionicons name="home" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <Entypo name="home" size={24} color={color} />
+          ),
         }}
       />
       <Tab.Screen
         component={CreateSchedule}
         name="CreateSchedule"
         options={{
-          tabBarButton: Button,
           tabBarIcon: ({ color }) => (
-            <Ionicons name="add-circle" color={color} />
+            <Entypo name="plus" size={24} color={color} />
           ),
         }}
       />
@@ -68,8 +77,9 @@ const WelcomeStack = () => {
         component={ViewSchedules}
         name="ViewSchedules"
         options={{
-          tabBarButton: Button,
-          tabBarIcon: ({ color }) => <Ionicons name="calendar" color={color} />,
+          tabBarIcon: ({ color }) => {
+            <Entypo name="calendar" size={24} color={color} />;
+          },
         }}
       />
     </Tab.Navigator>
