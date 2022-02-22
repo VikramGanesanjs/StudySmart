@@ -8,9 +8,9 @@ import {
   formatDuration2,
   radToMinutes,
   absoluteDuration,
-} from "duration/Constants";
+} from "../Constants";
 
-import Label from "duration/components/Label";
+import Label from "./Label";
 
 interface ContainerProps {
   start: Animated.SharedValue<number>;

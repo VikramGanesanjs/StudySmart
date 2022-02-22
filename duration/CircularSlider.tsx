@@ -15,10 +15,10 @@ import {
   CENTER,
   arc,
   absoluteDuration,
-} from "duration/Constants";
-import Cursor from "duration/Cursor";
-import Gesture from "duration/Gesture";
-import Quadrant from "duration/components/Quadrant";
+} from "./Constants";
+import Cursor from "./Cursor";
+import Gesture from "./Gesture";
+import Quadrant from "./components/Quadrant";
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 

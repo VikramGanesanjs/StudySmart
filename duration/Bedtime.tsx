@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { View, StyleSheet, Text, ScrollView, Pressable } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
-import { db, auth } from "../../config/firebase";
-import CircularSlider from "duration/CircularSlider";
-import { PADDING, radToMinutes, absoluteDuration } from "duration/Constants";
-import Container from "duration/components/Container";
-import { RegisterScreenDividerLine1, RegisterScreenDividerLine2, RegisterScreenEmailTextInput, RegisterScreenSubmitButton, RegisterScreenSubmitButtonText } from "../../styles/styles";
-import { screenWidth } from './../../styles/styles';
+import { db, auth } from "../config/firebase";
+import CircularSlider from "./CircularSlider";
+import { PADDING, radToMinutes, absoluteDuration, normalize } from "./Constants";
+import Container from "./components/Container";
+import { RegisterScreenDividerLine1, RegisterScreenDividerLine2, RegisterScreenEmailTextInput, RegisterScreenSubmitButton, RegisterScreenSubmitButtonText } from "../styles/styles";
+import { screenHeight, screenWidth } from '../styles/styles';
 import { TextInput } from "react-native-gesture-handler";
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, Timestamp } from 'firebase/firestore';
 
 const styles = StyleSheet.create({
   container: {
@@ -45,6 +45,11 @@ const Bedtime = () => {
 
 
   return (
+    <View style={{
+      backgroundColor: '#ffffff',
+      height: screenHeight,
+      width: screenWidth,
+    }}>
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Create a Study Schedule</Text>
       <View style={{
@@ -226,9 +231,9 @@ const Bedtime = () => {
             friday: friday,
             saturday: saturday,
             sunday: sunday,
-            duration: Math.round(radToMinutes(absoluteDuration(start.value, end.value))),
-            start: start.value,
-            end: end.value,
+            durationInMinutes: Math.round(radToMinutes(absoluteDuration(start.value, end.value))),
+            start: new Timestamp(radToMinutes(normalize(start.value)) * 60, 0),
+            end: new Timestamp(radToMinutes(normalize(end.value)) * 60, 0),
           }
         }, {merge: true})
       }
@@ -238,6 +243,7 @@ const Bedtime = () => {
         </RegisterScreenSubmitButtonText>
       </RegisterScreenSubmitButton>
     </ScrollView>
+    </View>
   );
 };
 

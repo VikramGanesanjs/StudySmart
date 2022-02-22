@@ -3,7 +3,7 @@ import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { Vector } from "react-native-redash";
 import { FontAwesome as Icon } from "@expo/vector-icons";
 
-import { STROKE } from "duration/Constants";
+import { STROKE } from "./Constants";
 
 interface CursorOverlayProps {
   position: Animated.SharedValue<Vector>;

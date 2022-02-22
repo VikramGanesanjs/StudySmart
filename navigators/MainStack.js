@@ -98,4 +98,6 @@ const Button = (props) => {
     />
   );
 };
+
+const FinalStack = () => {};
 export default MainStack;

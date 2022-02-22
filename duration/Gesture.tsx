@@ -7,8 +7,8 @@ import {
 import Animated, { useAnimatedGestureHandler } from "react-native-reanimated";
 import { canvas2Polar, Vector } from "react-native-redash";
 
-import { CENTER, containedInSquare, normalize, STROKE } from "duration/Constants";
-import CursorOverlay from "duration/CursorOverlay";
+import { CENTER, containedInSquare, normalize, STROKE } from "./Constants";
+import CursorOverlay from "./CursorOverlay";
 
 enum Region {
   START,

@@ -2,7 +2,7 @@ import React from "react";
 import { polar2Canvas } from "react-native-redash";
 import { Circle, Line, G } from "react-native-svg";
 
-import { CENTER, PADDING, R, SIZE, STROKE, TAU } from "duration/Constants";
+import { CENTER, PADDING, R, SIZE, STROKE, TAU } from "../Constants";
 
 const LINES = 75;
 const DELTA = TAU / LINES;

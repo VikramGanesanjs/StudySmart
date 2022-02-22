@@ -1,1 +1,1 @@
-export { default } from "duration/Bedtime";
+export { default } from "./Bedtime";
