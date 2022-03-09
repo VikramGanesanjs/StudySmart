@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { View, StyleSheet, Text, ScrollView, Pressable } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import { db, auth } from "../config/firebase";
@@ -41,7 +41,7 @@ const Bedtime = () => {
 
   const start = useSharedValue(0);
   const end = useSharedValue(1.5 * Math.PI);
-
+  
 
 
   return (

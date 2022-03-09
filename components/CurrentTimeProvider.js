@@ -1,22 +1,15 @@
 import React, { createContext, useEffect, useState } from "react";
 
-const CurrentTimeContext = createContext({});
+export const CurrentDataContext = createContext({});
 
-const CurrentTimeProvider = ({ children }) => {
-  const [currentDate, setCurrentDate] = useState(new Date());
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentDate(new Date());
-    }, 15000);
-    return () => clearInterval(timer);
-  }, []);
+const CurrentDataProvider = ({ children }) => {
+  const [data, setData] = useState({});
 
   return (
-    <CurrentTimeContext.Provider value={{ currentDate, setCurrentDate }}>
+    <CurrentDataContext.Provider value={{ data, setData }}>
       {children}
-    </CurrentTimeContext.Provider>
+    </CurrentDataContext.Provider>
   );
 };
 
-export { CurrentTimeProvider };
+export { CurrentDataProvider };

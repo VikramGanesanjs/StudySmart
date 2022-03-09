@@ -6,7 +6,7 @@ import { auth } from "../config/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { UserContext } from "./../components/UserProvider";
 import { NavigationContainer } from "@react-navigation/native";
-import MainStack from "./MainStack";
+import FinalStack from "./MainStack";
 
 const RootStack = () => {
   const { user, setUser } = useContext(UserContext);
@@ -35,7 +35,7 @@ const RootStack = () => {
 
   return (
     <NavigationContainer>
-      {user ? <MainStack /> : <AuthStack />}
+      {user ? <FinalStack /> : <AuthStack />}
     </NavigationContainer>
   );
 };

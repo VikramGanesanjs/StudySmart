@@ -13,7 +13,7 @@ import InitialScreen from "./screens/InitialScreen";
 import Login from "./screens/Login";
 import RootStack from "./navigators/RootStack";
 import { UserProvider } from "./components/UserProvider";
-import { CurrentTimeProvider } from "./components/CurrentTimeProvider";
+import { CurrentScheduleProvider } from "./components/CurrentScheduleProvider";
 
 export default function App() {
   let [fontsLoaded] = useFonts({
@@ -26,21 +26,12 @@ export default function App() {
   }
 
   return (
-    <UserProvider>
-      <CurrentTimeProvider>
+    <CurrentScheduleProvider>
+      <UserProvider>
         <RootStack />
-      </CurrentTimeProvider>
-    </UserProvider>
+      </UserProvider>
+    </CurrentScheduleProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
 
 registerRootComponent(App);
