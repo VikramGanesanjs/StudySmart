@@ -14,7 +14,7 @@ import { Entypo } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { View } from "react-native";
 import { useContext, useState, useEffect } from "react";
-import { CurrentTimeContext } from "../components/CurrentTimeProvider";
+import { CurrentDataContext } from "../components/CurrentDataProvider";
 import { doc } from "firebase/firestore";
 import { getDoc } from "firebase/firestore";
 import { Timestamp, onSnapshot } from "firebase/firestore";
@@ -42,6 +42,7 @@ const MainStack = () => {
       initialRouteName="CreateSchedule"
       screenOptions={{
         tabBarShowLabel: false,
+        tabBarShowIcon: true,
         headerShown: "none",
         tabBarIndicatorStyle: {
           backgroundColor: "#000000",
@@ -84,9 +85,9 @@ const MainStack = () => {
         component={ViewSchedules}
         name="ViewSchedules"
         options={{
-          tabBarIcon: ({ color }) => {
-            <Entypo name="calendar" size={24} color={color} />;
-          },
+          tabBarIcon: ({ color }) => (
+            <Entypo name="calendar" size={24} color={color} />
+          ),
         }}
       />
     </Tab.Navigator>
@@ -109,28 +110,10 @@ const Button = (props) => {
 const FinalStack = () => {
   const [time, setTime] = useState(new Date());
   const [pomodoro, setPomodoro] = useState(false);
-  const [update, setUpdate] = useState(true);
   const { currentSchedule, setCurrentSchedule } = useContext(
     CurrentScheduleContext
   );
-  const [data, setData] = useState({});
-
-  const getSchedules = async () => {
-    let d;
-    const ref = doc(
-      db,
-      "Users",
-      auth.currentUser.uid,
-      `S-${auth.currentUser.uid}`,
-      `S1-${auth.currentUser.uid}`
-    );
-    try {
-      d = await getDoc(ref);
-    } catch (error) {
-      console.log(error);
-    }
-    return d.data();
-  };
+  const { data, setData } = useContext(CurrentDataContext);
 
   const readSchedules = (dData) => {
     const dayOfWeekAsString = (dayIndex) => {
@@ -153,8 +136,9 @@ const FinalStack = () => {
       const endTimestamp = new Timestamp(dData[key]["end"].seconds);
 
       const utcStartSeconds =
-        startTimestamp.seconds - time.getTimezoneOffset() * 8;
-      const utcEndseconds = endTimestamp.seconds - time.getTimezoneOffset() * 8;
+        startTimestamp.seconds - startTimestamp.toDate().getTimezoneOffset();
+      const utcEndseconds =
+        endTimestamp.seconds - startTimestamp.toDate().getTimezoneOffset();
       if (dData[key][dayOfWeekAsString(time.getDay())] == true) {
         if (clientSeconds > utcStartSeconds && clientSeconds < utcEndseconds) {
           setPomodoro(true);
@@ -167,35 +151,13 @@ const FinalStack = () => {
     });
   };
 
-  useEffect(async () => {
-    setData(await getSchedules());
-  }, [update]);
-
   useEffect(() => {
     const timer = setInterval(() => {
       setTime(new Date());
-      if (Object.keys(data).length === 0) {
-        setUpdate(!update);
-      } else {
-        readSchedules(data);
-      }
+      readSchedules(data);
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [update]);
-
-  useEffect(() => {
-    const ref = doc(
-      db,
-      "Users",
-      auth.currentUser.uid,
-      `S-${auth.currentUser.uid}`,
-      `S1-${auth.currentUser.uid}`
-    );
-    const unsub = onSnapshot(ref, (doc) => {
-      setUpdate(!update);
-    });
-    return () => unsub;
   }, []);
 
   return pomodoro ? <PomodoroStack /> : <MainStack />;

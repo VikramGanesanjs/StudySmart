@@ -14,6 +14,7 @@ import Login from "./screens/Login";
 import RootStack from "./navigators/RootStack";
 import { UserProvider } from "./components/UserProvider";
 import { CurrentScheduleProvider } from "./components/CurrentScheduleProvider";
+import { CurrentDataProvider } from "./components/CurrentDataProvider";
 
 export default function App() {
   let [fontsLoaded] = useFonts({

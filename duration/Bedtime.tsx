@@ -8,7 +8,7 @@ import Container from "./components/Container";
 import { RegisterScreenDividerLine1, RegisterScreenDividerLine2, RegisterScreenEmailTextInput, RegisterScreenSubmitButton, RegisterScreenSubmitButtonText } from "../styles/styles";
 import { screenHeight, screenWidth } from '../styles/styles';
 import { TextInput } from "react-native-gesture-handler";
-import { doc, setDoc, Timestamp } from 'firebase/firestore';
+import { addDoc, collection, doc, setDoc, Timestamp } from 'firebase/firestore';
 
 const styles = StyleSheet.create({
   container: {
@@ -211,18 +211,10 @@ const Bedtime = () => {
           </Text>
         </Pressable>
       </View>
-      <RegisterScreenSubmitButton onPress={() => {
-         const ref = doc(
-          db,
-          "Users",
-          auth.currentUser.uid,
-          `S-${auth.currentUser.uid}`, 
-          `S1-${auth.currentUser.uid}`,
-        );
+      <RegisterScreenSubmitButton onPress={async () => {
         const exp = monday || tuesday || wednesday || thursday || friday || saturday || sunday;
         if(exp && subject != ''){
-        setDoc(ref, {
-          [Date.now()]: {
+          await addDoc(collection(db, "Users", auth.currentUser.uid, `S-${auth.currentUser.uid}`), {
             subject: subject,
             monday: monday,
             tuesday: tuesday, 
@@ -234,10 +226,10 @@ const Bedtime = () => {
             durationInMinutes: Math.round(radToMinutes(absoluteDuration(start.value, end.value))),
             start: new Timestamp(radToMinutes(normalize(start.value)) * 60, 0),
             end: new Timestamp(radToMinutes(normalize(end.value)) * 60, 0),
-          }
-        }, {merge: true})
+          })
+        }
       }
-      }}>
+      }>
         <RegisterScreenSubmitButtonText>
           Create
         </RegisterScreenSubmitButtonText>

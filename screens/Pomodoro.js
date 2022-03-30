@@ -10,7 +10,9 @@ import {
 import { signOut } from "firebase/auth";
 import { auth, db } from "../config/firebase";
 import { CurrentScheduleContext } from "./../components/CurrentScheduleProvider";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, Timestamp } from "firebase/firestore";
+import { CurrentDataContext } from "./../components/CurrentDataProvider";
+import { setStatusBarNetworkActivityIndicatorVisible } from "expo-status-bar";
 
 const Pomodoro = () => {
   const [studyTime, setStudyTime] = useState(true);
@@ -19,17 +21,20 @@ const Pomodoro = () => {
   const { currentSchedule, setCurrentSchedule } = useContext(
     CurrentScheduleContext
   );
-  const [duration, setDuration] = useState(1500);
+
   const [update, setUpdate] = useState(false);
-  const [data, setData] = useState({});
+  const { data, setData } = useContext(CurrentDataContext);
   const [timerDuration, setTimerDuration] = useState(1500);
 
   const [scheduleFormat, setScheduleFormat] = useState([]);
   const [focusOne, setFocusOne] = useState("");
   const [focusTwo, setFocusTwo] = useState("");
+  const [index, setIndex] = useState(0);
+  const [initialTime, setInitialTime] = useState(1499);
 
-  let index = 0;
-  let inBounds = index + 1 < scheduleFormat.length;
+  let inBounds = index == scheduleFormat.length - 1;
+
+  let randomVar = 0;
 
   const animateBgColor = () => {
     if (studyTime) {
@@ -60,6 +65,34 @@ const Pomodoro = () => {
     }
     s.push(leftoverLastCycle * 60);
     setScheduleFormat(s);
+
+    const time = new Date();
+    const currentSeconds =
+      new Date().getHours() * 3600 +
+      new Date().getMinutes() * 60 +
+      new Date().getSeconds();
+    const startSeconds =
+      new Timestamp(data[currentSchedule]["start"]).seconds.seconds -
+      time.getTimezoneOffset();
+
+    const difference = currentSeconds - startSeconds;
+    let sum = 0;
+    let loc = 0;
+    let diff = 0;
+    for (let i = 0; i < s.length; i++) {
+      sum += s[i];
+      if (sum > difference) {
+        loc = i;
+        diff = s[i] - (sum - difference);
+        break;
+      }
+    }
+    setIndex(loc);
+    if (loc % 2 == 1) {
+      setStudyTime(false);
+      animateBgColor();
+    }
+    return scheduleFormat[index] - diff + 0.1;
   };
 
   const formatTime = (time) => {
@@ -75,34 +108,65 @@ const Pomodoro = () => {
   };
 
   useEffect(async () => {
-    let d;
-    const ref = doc(
-      db,
-      "Users",
-      auth.currentUser.uid,
-      `S-${auth.currentUser.uid}`,
-      `S1-${auth.currentUser.uid}`
-    );
-    try {
-      d = await getDoc(ref);
-    } catch (error) {
-      console.log(error);
-    }
-    setData(d.data());
-
-    if (Object.keys(data) < 10) {
+    if (currentSchedule == "") {
       setUpdate(!update);
     } else {
       setSubject(` ${data[currentSchedule]["subject"]}`);
-      setDuration(data[currentSchedule]["durationInMinutes"] * 60);
-      formatSchedule();
-      if (scheduleFormat.length === 0) {
-        setUpdate(!update);
-      } else {
-        setTimerDuration(scheduleFormat[index]);
-      }
+      randomVar = formatSchedule();
     }
   }, [update]);
+
+  const _renderTimer = () => {
+    if (randomVar !== 1499 && !Object.is(randomVar, NaN)) {
+      return (
+        <CountdownCircleTimer
+          isPlaying={true}
+          duration={
+            !inBounds
+              ? studyTime
+                ? 1500
+                : 300
+              : scheduleFormat[scheduleFormat.length - 1]
+          }
+          strokeWidth={50}
+          key={studyTime}
+          initialRemainingTime={randomVar}
+          colors="#ffffff"
+          size={300}
+          onComplete={() => {
+            animateBgColor();
+            setStudyTime(!studyTime);
+            setIndex(index + 1);
+          }}
+        >
+          {({ remainingTime }) => (
+            <Text
+              style={{
+                color: "#ffffff",
+                fontFamily: "SpaceGrotesk_400Regular",
+                fontSize: 50,
+              }}
+            >
+              {formatTime(remainingTime)}
+            </Text>
+          )}
+        </CountdownCircleTimer>
+      );
+    } else {
+      return (
+        <Text
+          style={{
+            fontFamily: "SpaceGrotesk_400Regular",
+            fontSize: 20,
+            marginBottom: 30,
+            color: "#ffffff",
+          }}
+        >
+          Loading...
+        </Text>
+      );
+    }
+  };
 
   return (
     <Animated.View
@@ -128,31 +192,8 @@ const Pomodoro = () => {
             display: "flex",
           }}
         >
-          <CountdownCircleTimer
-            isPlaying={true}
-            duration={timerDuration}
-            strokeWidth={50}
-            colors="#ffffff"
-            size={300}
-            onComplete={() => {
-              animateBgColor();
-              setStudyTime(!studyTime);
-              index++;
-              setTimerDuration(scheduleFormat[index]);
-            }}
-          >
-            {({ remainingTime }) => (
-              <Text
-                style={{
-                  color: "#ffffff",
-                  fontFamily: "SpaceGrotesk_400Regular",
-                  fontSize: 50,
-                }}
-              >
-                {formatTime(remainingTime)}
-              </Text>
-            )}
-          </CountdownCircleTimer>
+          {_renderTimer()}
+
           <Text
             style={{
               fontFamily: "SpaceGrotesk_400Regular",
@@ -225,6 +266,17 @@ const Pomodoro = () => {
                   !studyTime ? "of studying" : "of relaxation"
                 }`
               : ""}
+          </Text>
+          <Text
+            style={{
+              fontFamily: "SpaceGrotesk_400Regular",
+              fontSize: 20,
+              marginBottom: 30,
+              paddingTop: 30,
+              color: "#ffffff",
+            }}
+          >
+            {}
           </Text>
         </ScrollView>
       </KeyboardAvoidingView>

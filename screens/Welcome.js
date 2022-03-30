@@ -5,22 +5,12 @@ import { ScrollView, View, Text } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { auth, db } from "../config/firebase";
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
+import { signOut } from "firebase/auth";
+import { screenHeight, screenWidth } from "../styles/styles";
 
 const Welcome = () => {
   const [name, setName] = useState("");
   const [start, setStart] = useState(true);
-
-  const formatTime = (time) => {
-    let minutes = Math.floor(time / 60);
-    let seconds = time - minutes * 60;
-    function str_pad_left(string, pad, length) {
-      return (new Array(length + 1).join(pad) + string).slice(-length);
-    }
-
-    var finalTime =
-      str_pad_left(minutes, "0", 2) + ":" + str_pad_left(seconds, "0", 2);
-    return finalTime;
-  };
 
   const retrieveUserName = async () => {
     const docRef = doc(db, "Users", auth.currentUser.uid);
@@ -44,24 +34,34 @@ const Welcome = () => {
   }, []);
 
   return (
-    <ScrollView
-      contentContainerStyle={{
+    <View
+      style={{
         flex: 1,
-        justifyContent: "center",
         alignItems: "center",
-        height: 1400,
+        display: "flex",
+        flexDirection: "column",
+        padding: 10,
+        paddingTop: 20,
+        height: screenHeight,
+        width: screenWidth,
+        backgroundColor: "#ffffff",
       }}
     >
-      <CountdownCircleTimer
-        isPlaying={start}
-        duration={300}
-        colors={["#004777", "#F7B801", "#A30000", "#A30000"]}
-        colorsTime={[250, 200, 150, 0]}
-        onComplete={() => console.log("complete")}
+      <Text
+        style={{
+          fontFamily: "SpaceGrotesk_400Regular",
+          fontSize: 30,
+          textAlign: "center",
+        }}
+      >{`Welcome ${name}!`}</Text>
+      <TouchableOpacity
+        onPress={() => {
+          signOut(auth);
+        }}
       >
-        {({ remainingTime }) => <Text>{formatTime(remainingTime)}</Text>}
-      </CountdownCircleTimer>
-    </ScrollView>
+        <Text>Logout</Text>
+      </TouchableOpacity>
+    </View>
   );
 };
 

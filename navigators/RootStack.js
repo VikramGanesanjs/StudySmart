@@ -7,6 +7,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { UserContext } from "./../components/UserProvider";
 import { NavigationContainer } from "@react-navigation/native";
 import FinalStack from "./MainStack";
+import { CurrentDataProvider } from "../components/CurrentDataProvider";
 
 const RootStack = () => {
   const { user, setUser } = useContext(UserContext);
@@ -16,7 +17,9 @@ const RootStack = () => {
     const authListener = auth.onAuthStateChanged(async (user) => {
       try {
         await (user ? setUser(user) : setUser(null));
-        setIsLoading(false);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 3000);
       } catch (err) {
         console.log(err);
       }
@@ -26,16 +29,18 @@ const RootStack = () => {
   }, []);
 
   if (isLoading) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
+    return <SplashScreen />;
   }
 
   return (
     <NavigationContainer>
-      {user ? <FinalStack /> : <AuthStack />}
+      {user ? (
+        <CurrentDataProvider>
+          <FinalStack />
+        </CurrentDataProvider>
+      ) : (
+        <AuthStack />
+      )}
     </NavigationContainer>
   );
 };
