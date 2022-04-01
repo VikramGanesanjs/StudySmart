@@ -39,7 +39,7 @@ const PomodoroStack = () => {
 const MainStack = () => {
   return (
     <Tab.Navigator
-      initialRouteName="CreateSchedule"
+      initialRouteName="Welcome"
       screenOptions={{
         tabBarShowLabel: false,
         tabBarShowIcon: true,
