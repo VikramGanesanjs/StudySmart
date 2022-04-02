@@ -284,6 +284,59 @@ const Welcome = () => {
         >
           Break Time!
         </Text>
+        <View
+          style={{
+            display: "flex",
+            height: 200,
+            padding: 10,
+            marginTop: 40,
+            backgroundColor: "#ffffff",
+            width: screenWidth - 70,
+            borderColor: "#000000",
+            borderWidth: 10,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Text
+            style={{
+              fontFamily: "BarlowSemiCondensed_400Regular",
+              textAlign: "center",
+              color: "#000000",
+              fontSize: 20,
+            }}
+          >
+            After each 25 minute study interval, there will be a 5 minute break.
+            This prevents you from burnout or boredom, and allows you to digest
+            the information that you have just learned.
+          </Text>
+        </View>
+        <View
+          style={{
+            display: "flex",
+            height: 200,
+            padding: 10,
+            marginTop: 40,
+            width: screenWidth - 70,
+            backgroundColor: "#000000",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Text
+            style={{
+              fontFamily: "BarlowSemiCondensed_400Regular",
+              textAlign: "center",
+              color: "#ffffff",
+              fontSize: 18,
+            }}
+          >
+            Make sure to use this break time to relax, and take care of your
+            mental health. Studying for a major test is always stressful, so the
+            breaks allow for relaxation to relieve stress and to improve your
+            retention of information.
+          </Text>
+        </View>
       </View>
       <TouchableOpacity
         onPress={() => {
