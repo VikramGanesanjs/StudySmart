@@ -1,5 +1,5 @@
 import { setStatusBarBackgroundColor } from "expo-status-bar";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import React, { useState, useEffect } from "react";
 import { ScrollView, View, Text } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -7,12 +7,54 @@ import { auth, db } from "../config/firebase";
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
 import { signOut } from "firebase/auth";
 import { screenHeight, screenWidth } from "../styles/styles";
-
+import * as Notifications from "expo-notifications";
 import { Entypo } from "@expo/vector-icons";
+import Constants from "expo-constants";
 
 const Welcome = () => {
   const [name, setName] = useState("");
-  const [start, setStart] = useState(true);
+
+  const registerForPushNotificationsAsync = async () => {
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: false,
+      }),
+    });
+
+    let token;
+    if (Constants.isDevice) {
+      const { status: existingStatus } =
+        await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== "granted") {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== "granted") {
+        alert("Failed to get push token for push notification!");
+        return;
+      }
+      token = (await Notifications.getExpoPushTokenAsync()).data;
+      console.log(token);
+      const docRef = doc(db, "Users", auth.currentUser.uid);
+      setDoc(docRef, { expoPushToken: token }, { merge: true });
+    } else {
+      alert("Must use physical device for Push Notifications");
+    }
+
+    if (Platform.OS === "android") {
+      Notifications.setNotificationChannelAsync("default", {
+        name: "default",
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: "#FF231F7C",
+      });
+
+      return token;
+    }
+  };
 
   const retrieveUserName = async () => {
     const docRef = doc(db, "Users", auth.currentUser.uid);
@@ -29,6 +71,7 @@ const Welcome = () => {
     let isMounted = true;
     if (isMounted) {
       await retrieveUserName();
+      await registerForPushNotificationsAsync();
     }
     return () => {
       isMounted = false;
@@ -41,7 +84,7 @@ const Welcome = () => {
       decelerationRate={"fast"}
       contentContainerStyle={{
         flex: 1,
-        minHeight: (screenHeight - 100) * 3,
+        minHeight: (screenHeight - 100) * 4,
         maxHeight: 3000,
         alignItems: "center",
         display: "flex",
@@ -337,14 +380,122 @@ const Welcome = () => {
             retention of information.
           </Text>
         </View>
+        <View
+          style={{
+            marginTop: 10,
+          }}
+        >
+          <Entypo name="arrow-with-circle-down" size={40} color="white" />
+        </View>
       </View>
-      <TouchableOpacity
-        onPress={() => {
-          signOut(auth);
+      <View
+        style={{
+          height: screenHeight - 100,
+          width: screenWidth,
+          display: "flex",
+          alignItems: "center",
+          backgroundColor: "#000000",
         }}
       >
-        <Text>Logout</Text>
-      </TouchableOpacity>
+        <Text
+          style={{
+            marginTop: 40,
+            fontFamily: "SpaceGrotesk_400Regular",
+            fontSize: 50,
+            color: "#ffffff",
+          }}
+        >
+          Swipe Left!
+        </Text>
+        <View
+          style={{
+            borderColor: "#ffffff",
+            borderWidth: 5,
+            marginTop: 20,
+            width: screenWidth - 70,
+            height: 0,
+          }}
+        />
+
+        <Text
+          style={{
+            marginTop: 20,
+            fontFamily: "SpaceGrotesk_400Regular",
+            fontSize: 50,
+            color: "#ffffff",
+          }}
+        >
+          Get Started
+        </Text>
+        <View
+          style={{
+            display: "flex",
+            height: 200,
+            padding: 10,
+            marginTop: 40,
+            backgroundColor: "#000000",
+            width: screenWidth - 70,
+            borderColor: "#000000",
+            borderWidth: 10,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Text
+            style={{
+              fontFamily: "BarlowSemiCondensed_400Regular",
+              textAlign: "center",
+              color: "#ffffff",
+              fontSize: 20,
+            }}
+          >
+            Swipe Left to create a study schedule, and swipe left again to view
+            all of the schedules that you have created. If you would like to end
+            a schedule, swipe to the left on that schedule and press the delete
+            icon.
+          </Text>
+        </View>
+        <View
+          style={{
+            display: "flex",
+            height: 200,
+            padding: 10,
+            marginTop: 40,
+            width: screenWidth - 70,
+            backgroundColor: "#000000",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Text
+            style={{
+              fontFamily: "BarlowSemiCondensed_400Regular",
+              textAlign: "center",
+              color: "#ffffff",
+              fontSize: 18,
+            }}
+          >
+            If you would like to logout, press the logout button below.
+          </Text>
+          <TouchableOpacity
+            onPress={(e) => {
+              console.log(e);
+              signOut(auth);
+            }}
+          >
+            <Text
+              style={{
+                marginTop: 20,
+                fontFamily: "SpaceGrotesk_400Regular",
+                color: "#ffffff",
+                fontSize: 60,
+              }}
+            >
+              Logout
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </ScrollView>
   );
 };

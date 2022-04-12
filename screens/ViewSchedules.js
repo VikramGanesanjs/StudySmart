@@ -8,7 +8,7 @@ import {
 } from "react-native-gesture-handler";
 import { CurrentDataContext } from "./../components/CurrentDataProvider";
 import { Feather } from "@expo/vector-icons";
-import { deleteDoc, doc } from "firebase/firestore";
+import { deleteDoc, doc, getDoc } from "firebase/firestore";
 
 import {
   RegisterScreenHeading,
@@ -18,6 +18,7 @@ import {
   screenHeight,
 } from "../styles/styles";
 import { auth, db } from "../config/firebase";
+import { cancelScheduledNotificationAsync } from "expo-notifications";
 
 let index = 0;
 
@@ -398,18 +399,32 @@ const ViewSchedules = () => {
 
   const deleteItem = async (index) => {
     const arr = [...DATA];
+    const ref = doc(
+      db,
+      "Users",
+      `${auth.currentUser.uid}`,
+      `S-${auth.currentUser.uid}`,
+      `${Object.keys(data)[index]}`
+    );
+    const data = (await getDoc(ref)).data();
+    const arr2 = [
+      data["notificationId1"],
+      data["notificationId2"],
+      data["notificationId3"],
+      data["notificationId4"],
+      data["notificationId5"],
+      data["notificationId6"],
+      data["notificationId7"],
+    ];
+    arr2.forEach((item) => {
+      if (item != "none") {
+        cancelScheduledNotificationAsync(item);
+      }
+    });
     arr.splice(index, 1);
     console.log(arr);
     SETDATA(arr);
-    await deleteDoc(
-      doc(
-        db,
-        "Users",
-        `${auth.currentUser.uid}`,
-        `S-${auth.currentUser.uid}`,
-        `${Object.keys(data)[index]}`
-      )
-    );
+    await deleteDoc(ref);
     SETDATA(Array.from(new Set(DATA)));
   };
 

@@ -9,6 +9,15 @@ import { RegisterScreenDividerLine1, RegisterScreenDividerLine2, RegisterScreenE
 import { screenHeight, screenWidth } from '../styles/styles';
 import { TextInput } from "react-native-gesture-handler";
 import { addDoc, collection, doc, setDoc, Timestamp } from 'firebase/firestore';
+import * as Notifications from "expo-notifications";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -214,7 +223,29 @@ const Bedtime = () => {
       <RegisterScreenSubmitButton onPress={async () => {
         const exp = monday || tuesday || wednesday || thursday || friday || saturday || sunday;
         if(exp && subject != ''){
-          await addDoc(collection(db, "Users", auth.currentUser.uid, `S-${auth.currentUser.uid}`), {
+          let duration = Math.round(radToMinutes(absoluteDuration(start.value, end.value)))
+          let arr = [sunday, monday, tuesday, wednesday, thursday, friday, saturday]
+          let arr2 = [];
+          let minutes = radToMinutes(normalize(start.value));
+          for(let i = 0; i < 7; i++){
+            if(arr[i]){
+              arr2.push(await Notifications.scheduleNotificationAsync({
+                content: {
+                  title: `It's time to study ${subject}!`,
+                  body: `Study ${subject} today for ${duration / 60} minutes and ${duration % 60} minutes.`
+                },
+                trigger:{
+                 weekday: i + 1,
+                 hour: minutes /60,
+                 minute: minutes % 60,
+                 repeats: true,
+                }
+              }));
+            }
+            
+          }
+
+          let doc = await addDoc(collection(db, "Users", auth.currentUser.uid, `S-${auth.currentUser.uid}`), {
             subject: subject,
             monday: monday,
             tuesday: tuesday, 
@@ -226,6 +257,14 @@ const Bedtime = () => {
             durationInMinutes: Math.round(radToMinutes(absoluteDuration(start.value, end.value))),
             start: new Timestamp(radToMinutes(normalize(start.value)) * 60, 0),
             end: new Timestamp(radToMinutes(normalize(end.value)) * 60, 0),
+            notificationId1: arr2[0] ?? "none",
+            notificationId2: arr2[1] ?? "none",
+            notificationId3: arr2[3] ?? "none",
+            notificationId4: arr2[4] ?? "none",
+            notificationId5: arr2[5] ?? "none",
+            notificationId6: arr2[6] ?? "none",
+            notificationId7: arr2[7] ?? "none",
+            
           })
         }
       }
