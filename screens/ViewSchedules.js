@@ -505,7 +505,7 @@ const ViewSchedules = () => {
                   fontSize: 50,
                 }}
               >
-                loading...
+                No schedules created.
               </Text>
             </View>
           );
