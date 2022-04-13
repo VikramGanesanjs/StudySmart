@@ -1,5 +1,5 @@
 import React from "react";
-import Bedtime from "../duration/Bedtime";
+import Bedtime from "../components/duration/Bedtime";
 
 const CreateSchedule = () => {
   return <Bedtime />;
