@@ -478,6 +478,16 @@ const Welcome = () => {
             If you would like to logout, press the logout button below.
           </Text>
           <TouchableOpacity
+            style={{
+              marginTop: 30,
+              width: 300,
+              height: 100,
+              borderColor: "#ffffff",
+              borderWidth: 5,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
             onPress={(e) => {
               console.log(e);
               signOut(auth);
@@ -485,7 +495,6 @@ const Welcome = () => {
           >
             <Text
               style={{
-                marginTop: 20,
                 fontFamily: "SpaceGrotesk_400Regular",
                 color: "#ffffff",
                 fontSize: 60,

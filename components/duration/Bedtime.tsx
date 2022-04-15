@@ -236,8 +236,8 @@ const Bedtime = () => {
                 },
                 trigger:{
                  weekday: i + 1,
-                 hour: minutes /60,
-                 minute: minutes % 60,
+                 hour: Math.round(minutes /60),
+                 minute: Math.round(minutes % 60),
                  repeats: true,
                 }
               }));
@@ -255,15 +255,15 @@ const Bedtime = () => {
             saturday: saturday,
             sunday: sunday,
             durationInMinutes: Math.round(radToMinutes(absoluteDuration(start.value, end.value))),
-            start: new Timestamp(radToMinutes(normalize(start.value)) * 60, 0),
-            end: new Timestamp(radToMinutes(normalize(end.value)) * 60, 0),
+            start: new Timestamp(Math.round(radToMinutes(normalize(start.value)) * 60), 0),
+            end: new Timestamp(Math.round(radToMinutes(normalize(end.value)) * 60), 0),
             notificationId1: arr2[0] ?? "none",
             notificationId2: arr2[1] ?? "none",
-            notificationId3: arr2[3] ?? "none",
-            notificationId4: arr2[4] ?? "none",
-            notificationId5: arr2[5] ?? "none",
-            notificationId6: arr2[6] ?? "none",
-            notificationId7: arr2[7] ?? "none",
+            notificationId3: arr2[2] ?? "none",
+            notificationId4: arr2[3] ?? "none",
+            notificationId5: arr2[4] ?? "none",
+            notificationId6: arr2[5] ?? "none",
+            notificationId7: arr2[6] ?? "none",
             
           })
         }

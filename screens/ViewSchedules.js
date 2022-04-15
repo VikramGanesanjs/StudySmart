@@ -388,6 +388,7 @@ const ViewSchedules = () => {
   const { data, setData } = useContext(CurrentDataContext);
   const [DATA, SETDATA] = useState([]);
   const [update, setUpdate] = useState(false);
+  const [refresh, setRefresh] = useState(false);
 
   const formatData = () => {
     Object.keys(data).forEach((key) => {
@@ -398,7 +399,6 @@ const ViewSchedules = () => {
   };
 
   const deleteItem = async (index) => {
-    const arr = [...DATA];
     const ref = doc(
       db,
       "Users",
@@ -406,7 +406,7 @@ const ViewSchedules = () => {
       `S-${auth.currentUser.uid}`,
       `${Object.keys(data)[index]}`
     );
-    const data = (await getDoc(ref)).data();
+
     const arr2 = [
       data["notificationId1"],
       data["notificationId2"],
@@ -421,11 +421,10 @@ const ViewSchedules = () => {
         cancelScheduledNotificationAsync(item);
       }
     });
-    arr.splice(index, 1);
-    console.log(arr);
-    SETDATA(arr);
+    SETDATA([]);
     await deleteDoc(ref);
-    SETDATA(Array.from(new Set(DATA)));
+    setUpdate(!update);
+    setRefresh(refresh);
   };
 
   const renderItem = ({ item, index }) => {
@@ -456,6 +455,7 @@ const ViewSchedules = () => {
       }
     }, 500);
     console.log(DATA);
+    setRefresh(false);
   }, [update, data]);
 
   return (
@@ -490,6 +490,7 @@ const ViewSchedules = () => {
       <FlatList
         data={DATA}
         renderItem={renderItem}
+        refreshing={refresh}
         onRefresh={() => setUpdate(!update)}
         ListEmptyComponent={() => {
           return (
