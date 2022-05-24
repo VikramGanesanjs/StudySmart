@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState } from "react";
-import { View, Text } from "react-native";
+import { View, Text, RefreshControl } from "react-native";
 import {
   FlatList,
   Swipeable,
@@ -8,7 +8,7 @@ import {
 } from "react-native-gesture-handler";
 import { CurrentDataContext } from "./../components/CurrentDataProvider";
 import { Feather } from "@expo/vector-icons";
-import { deleteDoc, doc, getDoc } from "firebase/firestore";
+import { deleteDoc, doc, getDoc, Timestamp } from "firebase/firestore";
 
 import {
   RegisterScreenHeading,
@@ -18,9 +18,23 @@ import {
   screenHeight,
 } from "../styles/styles";
 import { auth, db } from "../config/firebase";
-import { cancelScheduledNotificationAsync } from "expo-notifications";
+import {
+  cancelScheduledNotificationAsync,
+  cancelAllScheduledNotificationsAsync,
+} from "expo-notifications";
 
 let index = 0;
+
+const formatTime = (seconds) => {
+  const start = new Date();
+  start.setHours(0, 0, 0, 0);
+  start.setSeconds(seconds);
+  const timeString = start.toLocaleTimeString();
+  return (
+    timeString.substring(0, timeString.length - 6) +
+    timeString.substring(timeString.length - 3)
+  );
+};
 
 const Item = ({
   subject,
@@ -35,6 +49,7 @@ const Item = ({
   friday,
   saturday,
   sunday,
+  id,
 }) => {
   const RightSwipe = () => {
     return (
@@ -139,7 +154,7 @@ const Item = ({
                 fontSize: 15,
               }}
             >
-              {start.toDate().toLocaleTimeString()}
+              {formatTime(start)}
             </Text>
           </View>
           <View
@@ -174,7 +189,7 @@ const Item = ({
                 fontSize: 15,
               }}
             >
-              {end.toDate().toLocaleTimeString()}
+              {formatTime(end)}
             </Text>
           </View>
           <View
@@ -209,7 +224,7 @@ const Item = ({
                 fontSize: 15,
               }}
             >
-              {duration.toString() + " minutes"}
+              {duration + " minutes"}
             </Text>
           </View>
         </View>
@@ -391,34 +406,38 @@ const ViewSchedules = () => {
   const [refresh, setRefresh] = useState(false);
 
   const formatData = () => {
-    Object.keys(data).forEach((key) => {
-      if (!DATA.includes(data[key])) {
-        SETDATA([...DATA, data[key]]);
-      }
-    });
+    let arr = [];
+    for (const schedule in data) {
+      let obj = { ...data[schedule] };
+      obj["id"] = schedule;
+      arr.push(obj);
+    }
+    SETDATA(arr);
   };
 
-  const deleteItem = async (index) => {
+  const deleteItem = async (id) => {
     const ref = doc(
       db,
       "Users",
       `${auth.currentUser.uid}`,
       `S-${auth.currentUser.uid}`,
-      `${Object.keys(data)[index]}`
+      id
     );
+    let d = await getDoc(ref);
+    let dData = d.data();
 
     const arr2 = [
-      data["notificationId1"],
-      data["notificationId2"],
-      data["notificationId3"],
-      data["notificationId4"],
-      data["notificationId5"],
-      data["notificationId6"],
-      data["notificationId7"],
+      dData["notificationId1"],
+      dData["notificationId2"],
+      dData["notificationId3"],
+      dData["notificationId4"],
+      dData["notificationId5"],
+      dData["notificationId6"],
+      dData["notificationId7"],
     ];
-    arr2.forEach((item) => {
+    arr2.forEach(async (item) => {
       if (item != "none") {
-        cancelScheduledNotificationAsync(item);
+        await cancelScheduledNotificationAsync(item);
       }
     });
     SETDATA([]);
@@ -432,8 +451,8 @@ const ViewSchedules = () => {
       <Item
         subject={item.subject}
         duration={item.durationInMinutes}
-        start={item.start}
-        end={item.end}
+        start={new Timestamp(item.start).seconds}
+        end={new Timestamp(item.end).seconds}
         monday={item.monday}
         tuesday={item.tuesday}
         wednesday={item.wednesday}
@@ -441,12 +460,13 @@ const ViewSchedules = () => {
         friday={item.friday}
         saturday={item.saturday}
         sunday={item.sunday}
-        handleDelete={async () => await deleteItem(index)}
+        id={item.id}
+        handleDelete={async () => await deleteItem(item.id)}
       />
     );
   };
 
-  useEffect(() => {
+  useEffect(async () => {
     formatData();
     setTimeout(() => {
       if (index < 1) {
@@ -454,7 +474,6 @@ const ViewSchedules = () => {
         index++;
       }
     }, 500);
-    console.log(DATA);
     setRefresh(false);
   }, [update, data]);
 
@@ -475,10 +494,20 @@ const ViewSchedules = () => {
           marginTop: 20,
           textAlign: "center",
           color: "#000000",
-          marginBottom: 20,
         }}
       >
         Schedules
+      </Text>
+      <Text
+        style={{
+          fontFamily: "SpaceGrotesk_400Regular",
+          fontSize: 15,
+          textAlign: "center",
+          color: "#000000",
+          marginBottom: 20,
+        }}
+      >
+        (If you don't see all of them, pull down to refresh a couple of times)
       </Text>
       <View
         style={{
@@ -488,10 +517,13 @@ const ViewSchedules = () => {
         }}
       />
       <FlatList
+        contentContainerStyle={{
+          minHeight: 2000,
+        }}
         data={DATA}
         renderItem={renderItem}
         refreshing={refresh}
-        onRefresh={() => setUpdate(!update)}
+        refreshControl={<RefreshControl onRefresh={formatData} />}
         ListEmptyComponent={() => {
           return (
             <View

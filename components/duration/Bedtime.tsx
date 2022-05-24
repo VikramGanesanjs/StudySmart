@@ -3,7 +3,7 @@ import { View, StyleSheet, Text, ScrollView, Pressable } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import { db, auth } from "../../config/firebase";
 import CircularSlider from "./CircularSlider";
-import { PADDING, radToMinutes, absoluteDuration, normalize } from "./Constants";
+import { PADDING, radToMinutes, absoluteDuration, normalize, PI } from "./Constants";
 import Container from "./components/Container";
 import { RegisterScreenDividerLine1, RegisterScreenDividerLine2, RegisterScreenEmailTextInput, RegisterScreenSubmitButton, RegisterScreenSubmitButtonText } from "../../styles/styles";
 import { screenHeight, screenWidth } from '../../styles/styles';
@@ -232,12 +232,12 @@ const Bedtime = () => {
               arr2.push(await Notifications.scheduleNotificationAsync({
                 content: {
                   title: `It's time to study ${subject}!`,
-                  body: `Study ${subject} today for ${duration / 60} minutes and ${duration % 60} minutes.`
+                  body: `Study ${subject} today for ${Math.round(duration / 60)} hours and ${duration % 60} minutes.`
                 },
                 trigger:{
                  weekday: i + 1,
-                 hour: Math.round(minutes /60),
-                 minute: Math.round(minutes % 60),
+                 hour: Math.floor(minutes /60),
+                 minute: Math.floor(minutes % 60),
                  repeats: true,
                 }
               }));
@@ -266,8 +266,24 @@ const Bedtime = () => {
             notificationId7: arr2[6] ?? "none",
             
           })
+          start.value = 0;
+          end.value = 1.5 * PI;
+          setSubject("");
+          setMonday(false);
+          setTuesday(false);
+          setWednesday(false);
+          setThursday(false);
+          setFriday(false);
+          setSaturday(false);
+          setSunday(false);
         }
+        
       }
+
+
+      
+
+
       }>
         <RegisterScreenSubmitButtonText>
           Create

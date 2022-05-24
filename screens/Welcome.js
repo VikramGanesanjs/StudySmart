@@ -37,7 +37,6 @@ const Welcome = () => {
         return;
       }
       token = (await Notifications.getExpoPushTokenAsync()).data;
-      console.log(token);
       const docRef = doc(db, "Users", auth.currentUser.uid);
       setDoc(docRef, { expoPushToken: token }, { merge: true });
     } else {
@@ -489,7 +488,6 @@ const Welcome = () => {
               alignItems: "center",
             }}
             onPress={(e) => {
-              console.log(e);
               signOut(auth);
             }}
           >
