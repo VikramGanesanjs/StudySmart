@@ -232,7 +232,7 @@ const Bedtime = () => {
               arr2.push(await Notifications.scheduleNotificationAsync({
                 content: {
                   title: `It's time to study ${subject}!`,
-                  body: `Study ${subject} today for ${Math.round(duration / 60)} hours and ${duration % 60} minutes.`
+                  body: `Study ${subject} today for ${Math.floor(duration / 60)} hours and ${duration % 60} minutes.`
                 },
                 trigger:{
                  weekday: i + 1,

@@ -82,7 +82,7 @@ const Item = ({
   };
 
   return (
-    <Swipeable renderRightActions={RightSwipe}>
+    <Swipeable renderRightActions={RightSwipe} rightThreshold={200}>
       <View>
         <View
           style={{
@@ -467,6 +467,7 @@ const ViewSchedules = () => {
   };
 
   useEffect(async () => {
+    console.log(data);
     formatData();
     setTimeout(() => {
       if (index < 1) {
@@ -492,22 +493,12 @@ const ViewSchedules = () => {
           fontFamily: "SpaceGrotesk_400Regular",
           fontSize: 30,
           marginTop: 20,
+          marginBottom: 30,
           textAlign: "center",
           color: "#000000",
         }}
       >
         Schedules
-      </Text>
-      <Text
-        style={{
-          fontFamily: "SpaceGrotesk_400Regular",
-          fontSize: 15,
-          textAlign: "center",
-          color: "#000000",
-          marginBottom: 20,
-        }}
-      >
-        (If you don't see all of them, pull down to refresh a couple of times)
       </Text>
       <View
         style={{

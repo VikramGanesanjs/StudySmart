@@ -1,11 +1,18 @@
 import React from "react";
 import { useState, useContext, useEffect } from "react";
-import { Text, KeyboardAvoidingView, Platform, Animated } from "react-native";
+import {
+  Text,
+  KeyboardAvoidingView,
+  Platform,
+  Animated,
+  Vibration,
+} from "react-native";
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
 import {
   TextInput,
   TouchableOpacity,
   ScrollView,
+  View,
 } from "react-native-gesture-handler";
 import { signOut } from "firebase/auth";
 import { auth, db } from "../config/firebase";
@@ -13,6 +20,8 @@ import { CurrentScheduleContext } from "./../components/CurrentScheduleProvider"
 import { doc, getDoc, Timestamp } from "firebase/firestore";
 import { CurrentDataContext } from "./../components/CurrentDataProvider";
 import { setStatusBarNetworkActivityIndicatorVisible } from "expo-status-bar";
+import { set } from "react-native-reanimated";
+import PomodoroTimer from "../components/PomodoroTimer";
 
 const Pomodoro = () => {
   const [studyTime, setStudyTime] = useState(true);
@@ -22,29 +31,33 @@ const Pomodoro = () => {
     CurrentScheduleContext
   );
 
-  const [update, setUpdate] = useState(false);
+  const [initialLoad, setInitialLoad] = useState(true);
+
   const { data, setData } = useContext(CurrentDataContext);
-  const [timerDuration, setTimerDuration] = useState(1500);
 
   const [scheduleFormat, setScheduleFormat] = useState([]);
   const [focusOne, setFocusOne] = useState("");
   const [focusTwo, setFocusTwo] = useState("");
   const [index, setIndex] = useState(0);
-  const [initialTime, setInitialTime] = useState(1499);
+  const [initialTime, setInitialTime] = useState(null);
+  const [scheduleInfo, setScheduleInfo] = useState({
+    minutesCompleted: "",
+    minutesLeft: "",
+  });
 
   let inBounds = index == scheduleFormat.length - 1;
-
-  let randomVar = 0;
 
   const animateBgColor = () => {
     if (studyTime) {
       Animated.timing(animation, {
         toValue: 1,
+        useNativeDriver: false,
         duration: 1000,
       }).start(() => {});
     } else {
       Animated.timing(animation, {
         toValue: 0,
+        useNativeDriver: false,
         duration: 1000,
       }).start(() => {});
     }
@@ -66,107 +79,62 @@ const Pomodoro = () => {
     s.push(leftoverLastCycle * 60);
     setScheduleFormat(s);
 
-    const time = new Date();
     const currentSeconds =
       new Date().getHours() * 3600 +
       new Date().getMinutes() * 60 +
       new Date().getSeconds();
-    const startSeconds =
-      new Timestamp(data[currentSchedule]["start"]).seconds.seconds -
-      time.getTimezoneOffset();
+    const startSeconds = new Timestamp(data[currentSchedule]["start"]).seconds
+      .seconds;
 
-    const difference = currentSeconds - startSeconds;
+    const secondsAlreadyCompleted = currentSeconds - startSeconds;
+
     let sum = 0;
-    let loc = 0;
-    let diff = 0;
-    for (let i = 0; i < s.length; i++) {
-      sum += s[i];
-      if (sum > difference) {
-        loc = i;
-        diff = s[i] - (sum - difference);
+    for (let i = 0; i < scheduleFormat.length; i++) {
+      sum += scheduleFormat[i];
+      if (sum >= secondsAlreadyCompleted) {
+        setInitialTime(sum - secondsAlreadyCompleted);
+        console.log(sum - secondsAlreadyCompleted);
+        setIndex(i);
+        if (i % 2 === 1) {
+          animateBgColor();
+          setStudyTime(false);
+        }
+        setInitialLoad(false);
         break;
       }
     }
-    setIndex(loc);
-    if (loc % 2 == 1) {
-      setStudyTime(false);
-      animateBgColor();
-    }
-    return scheduleFormat[index] - diff + 0.1;
   };
 
-  const formatTime = (time) => {
-    let minutes = Math.floor(time / 60);
-    let seconds = time - minutes * 60;
-    function str_pad_left(string, pad, length) {
-      return (new Array(length + 1).join(pad) + string).slice(-length);
-    }
+  const handleTimerComplete = () => {
+    console.log(`Timer completed ${index + 1} times`);
+    animateBgColor();
+    setStudyTime(!studyTime);
+    setIndex(index + 1);
+    Vibration.vibrate();
+  };
 
-    var finalTime =
-      str_pad_left(minutes, "0", 2) + ":" + str_pad_left(seconds, "0", 2);
-    return finalTime;
+  const handleTimerUpdate = () => {
+    let s = {};
+    let difference1 =
+      new Date().getHours() * 3600 +
+      new Date().getMinutes() * 60 +
+      new Date().getSeconds() -
+      new Timestamp(data[currentSchedule]["start"]).seconds.seconds;
+
+    s["minutesCompleted"] = `${Math.floor(difference1 / 60)} minutes completed`;
+    s["minutesLeft"] = `${
+      data[currentSchedule]["durationInMinutes"] - Math.floor(difference1 / 60)
+    } minutes left`;
+    setScheduleInfo(s);
   };
 
   useEffect(async () => {
     if (currentSchedule == "") {
-      setUpdate(!update);
     } else {
       setSubject(` ${data[currentSchedule]["subject"]}`);
-      randomVar = formatSchedule();
+      formatSchedule();
     }
-  }, [update]);
-
-  const _renderTimer = () => {
-    if (randomVar !== 1499 && !Object.is(randomVar, NaN)) {
-      return (
-        <CountdownCircleTimer
-          isPlaying={true}
-          duration={
-            !inBounds
-              ? studyTime
-                ? 1500
-                : 300
-              : scheduleFormat[scheduleFormat.length - 1]
-          }
-          strokeWidth={50}
-          key={studyTime}
-          initialRemainingTime={randomVar}
-          colors="#ffffff"
-          size={300}
-          onComplete={() => {
-            animateBgColor();
-            setStudyTime(!studyTime);
-            setIndex(index + 1);
-          }}
-        >
-          {({ remainingTime }) => (
-            <Text
-              style={{
-                color: "#ffffff",
-                fontFamily: "SpaceGrotesk_400Regular",
-                fontSize: 50,
-              }}
-            >
-              {formatTime(remainingTime)}
-            </Text>
-          )}
-        </CountdownCircleTimer>
-      );
-    } else {
-      return (
-        <Text
-          style={{
-            fontFamily: "SpaceGrotesk_400Regular",
-            fontSize: 20,
-            marginBottom: 30,
-            color: "#ffffff",
-          }}
-        >
-          Loading...
-        </Text>
-      );
-    }
-  };
+  }, [currentSchedule]);
 
   return (
     <Animated.View
@@ -192,7 +160,25 @@ const Pomodoro = () => {
             display: "flex",
           }}
         >
-          {_renderTimer()}
+          <Text
+            style={{
+              fontFamily: "SpaceGrotesk_400Regular",
+              color: "#ffffff",
+              margin: 10,
+              textAlign: "center",
+              fontSize: 20,
+            }}
+          >
+            {`${scheduleInfo["minutesCompleted"]}, ${scheduleInfo["minutesLeft"]}`}
+          </Text>
+
+          {initialTime && (
+            <PomodoroTimer
+              initialTime={initialTime}
+              handleTimerComplete={handleTimerComplete}
+              handleTimerUpdate={handleTimerUpdate}
+            />
+          )}
 
           <Text
             style={{
